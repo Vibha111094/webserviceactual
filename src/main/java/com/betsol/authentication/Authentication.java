@@ -10,22 +10,17 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.glassfish.jersey.internal.util.Base64;
 
 public class Authentication {
-	private static final String AUTHORIZATION_PROPERTY = "Authorization";
-    private static final String AUTHENTICATION_SCHEME = "Basic";
-
+	
     public List<String> extractHeaderInfo(ContainerRequestContext requestContext) {
 
        
-        MultivaluedMap<String, String> headers = requestContext.getHeaders();
 
-        List<String> authorization = headers.get(AUTHORIZATION_PROPERTY);
+        List<String> authorization = requestContext.getHeaders().get("Authorization");
+        System.out.println(authorization);
         List<String> usernameAndPassword = new ArrayList<String>();
 
-        //If no authorization information present; block access
-        if (authorization == null || authorization.isEmpty()) {
-            return usernameAndPassword;
-        } //Decode username and password
-        String usernameAndPasswordFromHeader = new String(Base64.decode(authorization.get(0).replaceFirst(AUTHENTICATION_SCHEME + " ", "").getBytes()));
+       
+        String usernameAndPasswordFromHeader = new String(Base64.decode(authorization.get(0).replaceFirst("Basic" + " ", "").getBytes()));
 
         usernameAndPassword.add(0, Arrays.asList(usernameAndPasswordFromHeader.split(":")).get(0));
         usernameAndPassword.add(1, Arrays.asList(usernameAndPasswordFromHeader.split(":")).get(1));
